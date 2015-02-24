@@ -4,6 +4,7 @@
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" exported="true"/>
+	<classpathentry kind="src" path="/statesactions" exported="true"/>
 	<classpathentry kind="lib" path="/Users/j/.m2/repository/ros/rosjava_core/rosjava/0.0.0-SNAPSHOT/rosjava-0.0.0-SNAPSHOT.jar" exported="true"/>
 	<classpathentry kind="lib" path="/Users/j/.m2/repository/ctu/nengoros/jroscore/0.0.11-SNAPSHOT/jroscore-0.0.11-SNAPSHOT.jar" exported="true"/>
 	<classpathentry sourcepath="/Users/j/.gradle/caches/artifacts-26/filestore/junit/junit/4.10/source/6c98d6766e72d5575f96c9479d1c1d3b865c6e25/junit-4.10-sources.jar" kind="lib" path="/Users/j/.gradle/caches/artifacts-26/filestore/junit/junit/4.10/jar/e4f1766ce7404a08f45d859fb9c226fc9e41a861/junit-4.10.jar" exported="true"/>
