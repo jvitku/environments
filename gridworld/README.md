@@ -42,34 +42,30 @@ The simulator should be configured with given obstacles and sources of rewards/p
 Running the Demo
 ---------------------
 
-The algorithm can be ran either as a NeuralModule in the Nengoros simulator, or as a standalone ROS node. 
+The algorithm can be ran either as a NeuralModule in the Nengoros simulator, or as a standalone ROS node (TODO example script). 
 
 ## Standalone ROS Node
 
 this is everything TODO: 
 
-The start scripts are prepared in the `rl/sarsa` folder which simplify launching the nodes. There are three following nodes:
+The start scripts are prepared in the `environments/gridworld` folder which simplify launching the nodes. There are three following nodes:
 
-* **QLambda node** (`org.hanns.rl.discrete.ros.sarsa.QLambda`) which implements the Q(lambda) discrete RL algorithm with eligibility traces
 * **GridWorldNode** (`org.hanns.rl.discrete.ros.testnodes.GridWorldNode`) which implements simple simulator with a grid world and a source of reinforcement
-* **QLambdaConfigurator** (`org.hanns.rl.discrete.ros.testnodes.QLambdaConfigurator`) which serves as an example of online configuration of ROS RL node
 
-The following should be started from the `rl/sarsa` folder for successful running the demo:
+The following should be started from the `environments/gridworld` folder for successful running the demo:
 
 	jroscore
-	./conf 		# RL algorithm configuration
 	./map		# simple grid world simulator
-	./qlambda	# Q(lambda) discrete RL algorithm
 
 ## Nengoros Integration
 
-The standard jython scripts are included in the `rl/sarsa/python` folder, so [linking the data](http://nengoros.wordpress.com/tutorials/integrating-new-project-with-the-nengoros/) into the simulator and following one of tutorials [how to run ROS nodes](http://nengoros.wordpress.com/tutorials/demo-2-publisher-subscriber/) in the Nengoros is sufficient. To link data, run the following command from the folder `nengoros/demonodes`:
+The standard jython scripts are included in the `environments/gridworld/python` folder, so [linking the data](http://nengoros.wordpress.com/tutorials/integrating-new-project-with-the-nengoros/) into the simulator and following one of tutorials [how to run ROS nodes](http://nengoros.wordpress.com/tutorials/demo-2-publisher-subscriber/) in the Nengoros is sufficient. To link data, run the following command from the folder `nengoros/demonodes`:
 
-	./linkdata -cf ../rl/sarsa
+	./linkdata -cf ../environments/gridworld
 	
 For example how to use the QLambda node, start the Nengoros simulator and write the following command into the console:
 
-	run nr-demo/sarsa/demo.py
+	TODO
 
 
 TODO and Design Details
@@ -81,9 +77,9 @@ Node configuration is defined on two main levels:
 
 * **Online Configuration** will be determined online by means of config inputs. These inputs are basically the same as data inputs and their values can be changed during the simulation.
 
-## Discrete SARSA
-* **Number of (domain independent) actions** is received as the final configuration (in the configuration) received as ROS node parameter during the start
+## Discrete World
 
+* **Number of (domain independent) actions** is received as the final configuration (in the configuration) received as ROS node parameter during the start
 
 * **Number of world states** is another question, this could be done in one of the following manners:
 
@@ -115,37 +111,20 @@ Node configuration is defined on two main levels:
 	* This configuration (also) **determines number of inputs** (Nengoros)
 	
 	The sampling resolution can be set the same for all inputs or for each one separately (different size of Q-learning matrix)
-
-#### Algorithm parameters
-
-These **online** configurations determine the parameters of the algorithm, namely:
-
-* Learning algorithm setup:
-	* **Alpha** - Learning rate from <0,1>
-	* **Gamma** - Forgetting factor from <0,1>
-		
-* Exploration vs. exploitation setup:
-	
-	* **Epsilon** - Epsilon-greedy action selection algorithm. Parameter from <0,1>. With the probability of `Epsilon`, the algorithm selects action randomly with uniform distribution. With the probability of `1-Epsilon`, the greedy selection strategy is used.
-		
-* Eligibility traces setup:
-	
-	* **Lambda** - Eligibility traces parameter from <0,1>. If Lambda=0, the algorithm is one step TD, if Lambda=1, the algorithm becomes Monte-Carlo Method.
-	* **Eligibitily Length** - final length of the eligibility trace (for purposes of implementation).
-
 	
 	
-### Running the Algorithm
+### Running the Gridworld
 
 After launching the node:
 
 * the algorithm is setup (if no configuration parameters found, the default ones are loaded) 
-* and the node waits for data.
-* if the data sample is received, this is considered as a simulation step, which means:
-	* one algorithm step is made and output values are updated
+* then the node waits for received action
+* if the action is received, the world rules are applied and the resulting state together with reinforcement is sent back (published)
 
 
 ## Changelog
+
+* added dependency on the `statesactions` project
 
 * fixed bug in the synchronization in the simulator, sync problems should be gone
 
@@ -166,22 +145,17 @@ After launching the node:
 
 ## TODO
 
-* add dependency on the `statesactions` project
+
 * cleanup this TODO 
-* the command `./runner org.hanns.rl.discrete.ros.sarsa.QLambda __name:=nodeName /use_sim_time:=true _sampleCount:=5` throws exception (caused by the absolute `/use_sim_time` parameter)!
 
 * add repelors (allow reward values to be < 0)
-
-* rl_sarsa node (communication??) sometimes somehow crashes and:
-	
-		* it the node sends mostly only one action (sometimes action is changed or two actions periodically change)
 		
-* Add the config input (to the QLambda) specifying sample size (0,1] for sampling state variables
-* Add the ability to dynamically add Prosperity observer from jython, thus ditch the need of subclassing of QLambda
 * Reinforcement and the state description (data inputs to the RL module) should be in one message (potentially asynchronous comm.) but these could be splited in the Nengo interface into two inputs (also on other places)
-* Make some generally usable way how to add observer (e.g. writer) to a ROS node
+
 * Define the Observer interface for the GridWorldNode, call observers.observe() each step..
+
 * Implement read/save of the GridWorldMap (currently, each map has own class..)
+
 * Unit tests: fail after predefined time? If one of tested nodes ends with an exception, the other waits indefinitely.
-* Implement Q-matrix which is dynamically allocated
+
 * Add also the NOOP action everywhere (index is -1)
