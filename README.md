@@ -2,7 +2,7 @@ HANNS project - Nodes for Simulated Environments
 ================================================
 
 
-Author Jaroslav Vitku [vitkujar@gmail.com]
+Author Jaroslav Vitku [jarda.vitku@gmail.com]
 
 
 About
@@ -18,7 +18,10 @@ This is ROS meta-package (currently without direct catkin support), a collection
 Purpose of this repository
 -----------------------
 
-This project holds environments and test cases for the HANNS. There should be both discrete (e.g. gridWorld) and continuous (Vivae) environments.
+This project holds environments and test cases for the HANNS. There should be:
+
+* both discrete (e.g. `gridworld`) and continuous (`Vivae`) environments.
+* corresponding discrete and continuous definitions of actions and states (`statesactions` project).
 
 
 Technical notes
@@ -33,6 +36,7 @@ The best way how to install these nodes so far, is to use them as a part of the 
 TODO
 ----------
 
+- place disc. states and actions into the `statesactions` project
 - move the gridworld here
 - move the Vivae simulator here
 
