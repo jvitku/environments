@@ -8,9 +8,9 @@ Author Jaroslav Vitku [jarda.vitku@gmail.com]
 About
 ------
 
-This is a part of Hybrid Artificial Neural Network Systems (HANNS) project (see: http://artificiallife.co.nf ). 
+This is a part of Hybrid Artificial Neural Network Systems (HANNS) project (see [website](http://artificiallife.co.nf) ). 
 
-Each node can be connected into a potentially heterogeneous network of nodes communicating via the ROS, potentially Nengoros ( http://nengoros.wordpress.com ). 
+Each node can be connected into a potentially heterogeneous network of nodes communicating via the ROS, potentially [Nengoros](http://nengoros.wordpress.com). 
 
 This is ROS meta-package (currently without direct catkin support), a collection of ROS(java) nodes.
 
@@ -31,14 +31,15 @@ Technical notes
 Installation
 ------------------
 
-The best way how to install these nodes so far, is to use them as a part of the NengoRos project (see: https://github.com/jvitku/nengoros )
+The best way how to install these nodes so far, is to use them as a part of the NengoRos project (see [github](https://github.com/jvitku/nengoros) )
 
 TODO
 ----------
 
-- place disc. states and actions into the `statesactions` project
-- move the gridworld here
 - move the Vivae simulator here
 
 Changelog
 ------------------
+- gridworld now depends on the statesactions project, eclipse works
+- gridworld separated into statesactions and gridworld
+- unwanted sources cleaned-up
