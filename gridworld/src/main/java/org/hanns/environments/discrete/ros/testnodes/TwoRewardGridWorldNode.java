@@ -3,7 +3,7 @@ package org.hanns.environments.discrete.ros.testnodes;
 
 import java.util.LinkedList;
 
-import org.hanns.environments.discrete.world.GridWorld;
+import org.hanns.environments.discrete.world.GridWorldOld;
 import org.hanns.rl.common.exceptions.DecoderException;
 import org.ros.concurrent.CancellableLoop;
 import org.ros.message.MessageListener;
@@ -75,7 +75,7 @@ public class TwoRewardGridWorldNode extends GridWorldNode{
 	// TODO define custom map here! override this..
 	protected void defineMap(){
 		// create map, place the reinforcements
-		map = GridWorld.simpleRewardMap(sizex, sizey, null, 1);
+		map = GridWorldOld.simpleRewardMap(sizex, sizey, null, 1);
 		map[2][2] = rewardAVal;	// place reward A on the map
 		map[5][5] = rewardBVal;	// place reward B on the map
 	}

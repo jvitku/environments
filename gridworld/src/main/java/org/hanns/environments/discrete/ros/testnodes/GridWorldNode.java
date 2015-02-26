@@ -4,7 +4,7 @@ package org.hanns.environments.discrete.ros.testnodes;
 import java.util.LinkedList;
 
 import org.apache.commons.logging.Log;
-import org.hanns.environments.discrete.world.GridWorld;
+import org.hanns.environments.discrete.world.GridWorldOld;
 import org.hanns.rl.common.exceptions.DecoderException;
 import org.hanns.rl.discrete.actions.ActionSetInt;
 import org.hanns.rl.discrete.actions.impl.BasicFinalActionSet;
@@ -115,7 +115,7 @@ public class GridWorldNode extends AbstractConfigurableHannsNode{
 
 	protected void defineMap(){
 		// create map, place the reinforcements
-		map = GridWorld.simpleRewardMap(sizex, sizey, null, mapReward);
+		map = GridWorldOld.simpleRewardMap(sizex, sizey, null, mapReward);
 		map[2][2] = mapReward;	// place reward on the map
 	}
 
@@ -209,11 +209,11 @@ public class GridWorldNode extends AbstractConfigurableHannsNode{
 	}
 
 	protected void visMap(){
-		System.out.println(GridWorld.vis(map));
+		System.out.println(GridWorldOld.vis(map));
 	}
 
 	protected int[] executeMapAction(int action){
-		int[] newState = GridWorld.makeStep(sizex, sizey, action, state);
+		int[] newState = GridWorldOld.makeStep(sizex, sizey, action, state);
 		return newState;
 	}
 

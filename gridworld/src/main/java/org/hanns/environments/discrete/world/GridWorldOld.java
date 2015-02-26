@@ -6,7 +6,7 @@ import java.util.Random;
 
 /**
  * 
- * GridWorld simulation engine.
+ * GridWorldOld simulation engine.
  * 
  * The world is represented as a 2D matrix containing reward values.
  * 
@@ -14,7 +14,7 @@ import java.util.Random;
  * 
  * @author Jaroslav Vitku
  */
-public class GridWorld {
+public class GridWorldOld {
 	/**
 	 * Visualize the data in the QMatrix.
 	 * @param q Q(s,a) matrix
@@ -49,7 +49,7 @@ public class GridWorld {
 			for(int j=0; j<dimsizes[0]; j++){
 				state[0] = j;
 				actionvals = q.getActionValsInState(state);
-				best = GridWorld.getMaxInd(actionvals);
+				best = GridWorldOld.getMaxInd(actionvals);
 				if(what==0){
 					if(best<0){
 						line = line+"\t"+best;

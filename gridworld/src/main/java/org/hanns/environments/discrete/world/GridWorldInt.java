@@ -4,6 +4,9 @@ import org.hanns.environments.discrete.world.objects.Tale;
 
 public interface GridWorldInt{
 	
+	public int getSX();
+	public int getSY();
+	
 	public void makeStep(int action);
 	
 	/**

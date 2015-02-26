@@ -4,7 +4,7 @@ import org.hanns.environments.discrete.ros.testnodes.BenchmarkGridWorldNode;
 import org.hanns.environments.discrete.world.GridWorldObstacle;
 
 /**
- * GridWorld Node map with 30x30 tales and one attractor hidden behind the obstacle.
+ * GridWorldOld Node map with 30x30 tales and one attractor hidden behind the obstacle.
  * 
  * @author Jaroslav Vitku
  *

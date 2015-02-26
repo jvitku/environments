@@ -2,12 +2,12 @@ package org.hanns.environments.discrete.world;
 
 
 /**
- * The same as {@link GridWorld}, but here, the value of reinforcement of -1 represents
+ * The same as {@link GridWorldOld}, but here, the value of reinforcement of -1 represents
  * an obstacle. 
  * 
  * @author Jaroslav Vitku
  */
-public class GridWorldObstacle extends GridWorld{
+public class GridWorldObstacle extends GridWorldOld{
 
 	public static final String OBST = "XXX";
 	public static final String FREE = " . ";
@@ -38,7 +38,7 @@ public class GridWorldObstacle extends GridWorld{
 	}
 
 	public static int[] makeStep(int sx, int sy, int action, int[] current){
-		System.err.println("GridWorld ERROR: use the method makeStep()"
+		System.err.println("GridWorldOld ERROR: use the method makeStep()"
 				+ "where the map is passed as argument!");
 		return null;
 	}
