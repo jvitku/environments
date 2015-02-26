@@ -7,7 +7,7 @@ import ctu.nengoros.network.node.infrastructure.rosparam.impl.PrivateRosparam;
 import ctu.nengoros.network.node.infrastructure.rosparam.manager.ParamList;
 
 /**
- * The same as GrodWorldNode, but this one has predefined map with obstacles and rewards.
+ * The same as GridWorldNode, but this one has predefined map with obstacles and rewards.
  * 
  * @author Jaroslav Vitku
  *

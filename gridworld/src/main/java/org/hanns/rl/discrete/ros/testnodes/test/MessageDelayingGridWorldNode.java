@@ -1,7 +1,6 @@
 package org.hanns.rl.discrete.ros.testnodes.test;
 
 import org.hanns.rl.common.exceptions.DecoderException;
-import org.hanns.rl.discrete.ros.sarsa.QLambda;
 import org.hanns.rl.discrete.ros.testnodes.GridWorldNode;
 import org.ros.message.MessageListener;
 import org.ros.namespace.GraphName;
@@ -10,6 +9,7 @@ import org.ros.node.topic.Subscriber;
 
 import java.util.*;
 
+import ctu.nengoros.network.node.AbstractHannsNode;
 import ctu.nengoros.util.SL;
 
 /**
@@ -101,13 +101,13 @@ public class MessageDelayingGridWorldNode extends GridWorldNode{
 		/**
 		 * State publisher - connect to the input-data topic of (.e.g.) QLambda
 		 */
-		statePublisher =connectedNode.newPublisher(QLambda.topicDataIn, std_msgs.Float32MultiArray._TYPE);
+		statePublisher =connectedNode.newPublisher(AbstractHannsNode.topicDataIn, std_msgs.Float32MultiArray._TYPE);
 
 		/**
 		 * Action subscriber = subscribe to agents actions, process agents requests for simulating one step
 		 */
 		Subscriber<std_msgs.Float32MultiArray> epsilonSub = 
-				connectedNode.newSubscriber(QLambda.topicDataOut, std_msgs.Float32MultiArray._TYPE);
+				connectedNode.newSubscriber(AbstractHannsNode.topicDataOut, std_msgs.Float32MultiArray._TYPE);
 
 		epsilonSub.addMessageListener(new MessageListener<std_msgs.Float32MultiArray>() {
 			@Override

@@ -4,13 +4,13 @@ package org.hanns.rl.discrete.ros.testnodes;
 import java.util.LinkedList;
 
 import org.hanns.rl.common.exceptions.DecoderException;
-import org.hanns.rl.discrete.ros.sarsa.QLambda;
 import org.hanns.rl.discrete.ros.testnodes.worlds.GridWorld;
 import org.ros.concurrent.CancellableLoop;
 import org.ros.message.MessageListener;
 import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Subscriber;
 
+import ctu.nengoros.network.node.AbstractHannsNode;
 import ctu.nengoros.network.node.observer.Observer;
 import ctu.nengoros.util.SL;
 
@@ -85,13 +85,13 @@ public class TwoRewardGridWorldNode extends GridWorldNode{
 		/**
 		 * State publisher - connect to the input-data topic of (.e.g.) QLambda
 		 */
-		statePublisher =connectedNode.newPublisher(QLambda.topicDataIn, std_msgs.Float32MultiArray._TYPE);
+		statePublisher =connectedNode.newPublisher(AbstractHannsNode.topicDataIn, std_msgs.Float32MultiArray._TYPE);
 
 		/**
 		 * Action subscriber = subscribe to agents actions, process agents requests for simulating one step
 		 */
 		Subscriber<std_msgs.Float32MultiArray> epsilonSub = 
-				connectedNode.newSubscriber(QLambda.topicDataOut, std_msgs.Float32MultiArray._TYPE);
+				connectedNode.newSubscriber(AbstractHannsNode.topicDataOut, std_msgs.Float32MultiArray._TYPE);
 
 		epsilonSub.addMessageListener(new MessageListener<std_msgs.Float32MultiArray>() {
 			@Override

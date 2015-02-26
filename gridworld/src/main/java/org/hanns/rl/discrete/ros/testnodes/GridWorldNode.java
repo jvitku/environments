@@ -8,7 +8,6 @@ import org.hanns.rl.common.exceptions.DecoderException;
 import org.hanns.rl.discrete.actions.ActionSetInt;
 import org.hanns.rl.discrete.actions.impl.BasicFinalActionSet;
 import org.hanns.rl.discrete.actions.impl.OneOfNEncoder;
-import org.hanns.rl.discrete.ros.sarsa.QLambda;
 import org.hanns.rl.discrete.ros.testnodes.worlds.GridWorld;
 import org.hanns.rl.discrete.states.impl.BasicVariableEncoder;
 import org.ros.concurrent.CancellableLoop;
@@ -19,6 +18,7 @@ import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
 import ctu.nengoros.network.node.AbstractConfigurableHannsNode;
+import ctu.nengoros.network.node.AbstractHannsNode;
 import ctu.nengoros.network.node.infrastructure.rosparam.impl.PrivateRosparam;
 import ctu.nengoros.network.node.infrastructure.rosparam.manager.ParamList;
 import ctu.nengoros.network.node.observer.Observer;
@@ -159,13 +159,13 @@ public class GridWorldNode extends AbstractConfigurableHannsNode{
 		/**
 		 * State publisher - connect to the input-data topic of (.e.g.) QLambda
 		 */
-		statePublisher =connectedNode.newPublisher(QLambda.topicDataIn, std_msgs.Float32MultiArray._TYPE);
+		statePublisher =connectedNode.newPublisher(AbstractHannsNode.topicDataIn, std_msgs.Float32MultiArray._TYPE);
 
 		/**
 		 * Action subscriber = subscribe to agents actions, process agents requests for simulating one step
 		 */
 		Subscriber<std_msgs.Float32MultiArray> epsilonSub = 
-				connectedNode.newSubscriber(QLambda.topicDataOut, std_msgs.Float32MultiArray._TYPE);
+				connectedNode.newSubscriber(AbstractHannsNode.topicDataOut, std_msgs.Float32MultiArray._TYPE);
 
 		epsilonSub.addMessageListener(new MessageListener<std_msgs.Float32MultiArray>() {
 			@Override

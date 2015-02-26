@@ -2,7 +2,7 @@ package org.hanns.rl.discrete.ros.testnodes.worlds;
 
 import java.util.Random;
 
-import org.hanns.rl.discrete.learningAlgorithm.models.qMatrix.FinalQMatrix;
+//import org.hanns.rl.discrete.learningAlgorithm.models.qMatrix.FinalQMatrix;
 
 /**
  * Simple grid simulation. The world is represented as a 2D matrix containing reward values.
@@ -19,6 +19,7 @@ public class GridWorld {
 	 * if 2, the graphical representation of actions will be shown.
 	 * @return string visualizing the matrix
 	 */
+	/* TODO place this into the SMDP project
 	public static String visqm(FinalQMatrix<Double> q, int what){
 		String w = "";
 		if(what==0){
@@ -60,7 +61,7 @@ public class GridWorld {
 		}
 		return line;
 	}
-
+	*/
 	public static String toAction(int action){
 		if(action==0){
 			return "<";
