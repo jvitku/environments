@@ -42,4 +42,5 @@ public interface GridWorldInt{
 	 * @param y coordinate
 	 */
 	public void placeObject(Tale object, int x, int y);
+	
 }
