@@ -43,4 +43,9 @@ public interface GridWorldInt{
 	 */
 	public void placeObject(Tale object, int x, int y);
 	
+	/**
+	 * @return true if the agent has moved in the previous makeStep() call
+	 */
+	public boolean hasMoved();
+	
 }

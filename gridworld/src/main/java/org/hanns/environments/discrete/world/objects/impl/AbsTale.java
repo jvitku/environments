@@ -9,7 +9,7 @@ public abstract class AbsTale implements Tale{
 	
 	// default tale is an empty one
 	protected boolean isObstacle = false;
-	protected int reward = 0;
+	protected float reward = 0;
 	protected String label = AbsTale.EMPTY;
 
 
@@ -20,6 +20,6 @@ public abstract class AbsTale implements Tale{
 	public String getLabel() { return this.label; }
 
 	@Override
-	public int getReward() { return this.reward; }
+	public float getReward() { return this.reward; }
 
 }
