@@ -16,11 +16,6 @@ public class AbstractGridWorldNode extends AbstractConfigurableHannsNode{
 
 	public static final String name = "GridWorld";
 
-	// just an example
-	public static final String alphaConf = "alpha";
-	public static final String topicAlpha= conf+alphaConf;
-	public static final double DEF_ALPHA = 0.5;
-
 	/**
 	 * World parameters
 	 */
@@ -31,6 +26,10 @@ public class AbstractGridWorldNode extends AbstractConfigurableHannsNode{
 	public static final int[] DEF_SIZE = new int[]{DXS,DYS};
 	protected int[] worldSize;
 
+	public static final String posConf = "agentPos";
+	public static final int[] DEF_AGENTPOS = new int[]{0,0};
+	protected int[] agentInitPosition;
+	
 	// obstacles
 	public static final String obstaclesConf = "obstacles";
 	private static final int DXO=2, DYO=5;	// place one obst.
@@ -44,6 +43,11 @@ public class AbstractGridWorldNode extends AbstractConfigurableHannsNode{
 	public static final int[] DEF_REWARD = new int[]{DXR,DYR, 193, 1};//type=193,r=1
 	protected rewardConfig rc = new rewardConfig();
 
+	//enable randomization from the Nengoros simulator? (override the hardreset(true) to false?)
+	public static final String randomizeConf = "randomize";
+	public static final boolean DEF_RANDOMIZE = false;
+	protected boolean randomizeAllowed;
+	
 	class rewardConfig{
 		int[][] positions; 	// list of N X,Y coordinates
 		int[] values;		// e.g. reward/punishment source? (N values)
@@ -54,10 +58,7 @@ public class AbstractGridWorldNode extends AbstractConfigurableHannsNode{
 	public GraphName getDefaultNodeName() { return GraphName.of(name); }
 
 	@Override
-	public String listParams() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public String listParams() { return this.paramList.listParams(); }
 
 	@Override
 	public String getFullName() { return this.fullName; }
@@ -139,10 +140,13 @@ public class AbstractGridWorldNode extends AbstractConfigurableHannsNode{
 		System.out.println(me+"parsing parameters");
 		logToFile = r.getMyBoolean(logToFileConf, DEF_LTF);
 		logPeriod = r.getMyInteger(logPeriodConf, DEF_LOGPERIOD);
+		randomizeAllowed = r.getMyBoolean(randomizeConf, DEF_RANDOMIZE);
 
 		worldSize =this.checkSizes(r.getMyIntegerList(sizeConf, DEF_SIZE));
 		System.out.println("OK, world parameters parsed as: "+SL.toStr(worldSize));
 
+		agentInitPosition = this.checkAgentPos(r.getMyIntegerList(posConf, DEF_AGENTPOS));
+		
 		obstaclePositions = this.checkObstacles(r.getMyIntegerList(obstaclesConf, DEF_OBSTACLE));
 		System.out.println("OK, parsed list of obstacle coords is for X: "
 				+SL.toStr(obstaclePositions[0])+" and for Y: "+SL.toStr(obstaclePositions[1]));
@@ -198,11 +202,27 @@ public class AbstractGridWorldNode extends AbstractConfigurableHannsNode{
 		}
 	}
 	
+	private int[] checkAgentPos(int[] pos){
+		if(pos.length!=2 ||
+				pos[0] < 0 || pos[1] <0 ||
+				pos[0] >= this.worldSize[0] || pos[1] >= this.worldSize[1]){
+			System.out.println("WARNING: incorrect agent position: "+SL.toStr(pos)+" " +
+					", will use the default one: "+SL.toStr(DEF_AGENTPOS));
+			return DEF_AGENTPOS;
+		}
+		return pos;
+	}
+	
 	private boolean checkCoords(int x, int y, boolean warn){
 		if(x<0 || y<0 || x>=worldSize[0] || y>=worldSize[1]){
 			if(warn)
 				System.out.println("WARNING: given position out of the map, ignoring this object! ["+x+","+y+"]" +
 						" (world size: "+SL.toStr(worldSize)+")");
+			return false;
+		}
+		if(x==this.agentInitPosition[0] && y==this.agentInitPosition[1]){
+			if(warn)
+				System.out.println("WARNING: given position is on the agent, ignoring this object! ["+x+","+y+"]");
 			return false;
 		}
 		return true;
@@ -270,14 +290,15 @@ public class AbstractGridWorldNode extends AbstractConfigurableHannsNode{
 	@Override
 	protected void registerParameters() {
 		paramList = new ParamList();
+		// TODO IO
 		paramList.addParam(noInputsConf, ""+DEF_NOINPUTS,"Number of state variables");
 		paramList.addParam(noOutputsConf, ""+DEF_NOOUTPUTS,"Number of actions available to the agent (1ofN coded)");
 		paramList.addParam(logToFileConf, ""+DEF_LTF, "Enables logging into file");
 		paramList.addParam(logPeriodConf, ""+DEF_LOGPERIOD, "How often to log?");
-		// example
-		paramList.addParam(alphaConf, ""+DEF_ALPHA, "Learning rate");
+		paramList.addParam(randomizeConf, ""+DEF_RANDOMIZE, "Should allow RANDOMIZED reset from Nengo?");
 
 		paramList.addParam(sizeConf, SL.toStr(DEF_SIZE), "List of two integers determining X, Y size of the map");
+		paramList.addParam(posConf, SL.toStr(DEF_AGENTPOS), "Two integers determining X, Y starting position of the agent");
 		paramList.addParam(obstaclesConf, SL.toStr(DEF_OBSTACLE), "List (even no.) of coordinates (X1,Y1,X2,Y2..) of obstacles");
 		paramList.addParam(rewardConf, SL.toStr(DEF_REWARD), "List defining rewards as follows (X1,Y1,R1Type,R1Val,X2,Y2,..).");
 	}
