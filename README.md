@@ -36,10 +36,11 @@ The best way how to install these nodes so far, is to use them as a part of the 
 TODO
 ----------
 
-- move the Vivae simulator here
+* move the Vivae simulator here
 
 Changelog
 ------------------
-- gridworld now depends on the statesactions project, eclipse works
-- gridworld separated into statesactions and gridworld
-- unwanted sources cleaned-up
+* gridworld now depends on the statesactions project, eclipse works
+* gridworld separated into statesactions and gridworld
+* unwanted sources cleaned-up
+

@@ -121,6 +121,8 @@ After launching the node:
 
 ## Changelog
 
+* the `ros.AbstractGridWorldNode` added and works, TODO: add the world to the node
+
 * support for lists of integers passed as commandline parameters added (define all the world properties from commandline)
 
 * the GridWorld completely reworked, changes are:
@@ -152,9 +154,6 @@ After launching the node:
 
 ## TODO
 
-* cleanup this TODO 
-
-* add the `ros.GridWorldNode` class and test it
 
 * Add also the NOOP action everywhere (index is -1)
 		
