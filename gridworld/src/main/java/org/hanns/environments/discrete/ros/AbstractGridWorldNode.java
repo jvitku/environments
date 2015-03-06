@@ -12,7 +12,7 @@ import ctu.nengoros.network.node.observer.Observer;
 import ctu.nengoros.network.node.observer.stats.ProsperityObserver;
 import ctu.nengoros.util.SL;
 
-public class AbstractGridWorldNode extends AbstractConfigurableHannsNode{
+public abstract class AbstractGridWorldNode extends AbstractConfigurableHannsNode{
 
 	public static final String name = "GridWorld";
 
@@ -53,7 +53,7 @@ public class AbstractGridWorldNode extends AbstractConfigurableHannsNode{
 		int[] values;		// e.g. reward/punishment source? (N values)
 		int[] types;		// rewards can have different types (food/water..) 
 	};
-
+	
 	@Override
 	public GraphName getDefaultNodeName() { return GraphName.of(name); }
 
@@ -67,57 +67,35 @@ public class AbstractGridWorldNode extends AbstractConfigurableHannsNode{
 	public boolean isStarted() {
 		if(log==null)
 			return false;
+		if(r == null)
+			return false;
 		// TODO register all things that need to be started
 		return true;
 	}
 
 	@Override
-	public void hardReset(boolean arg0) {
-		// TODO Auto-generated method stub
+	public void softReset(boolean randomize){}
 
-	}
-
+	// no configuration needs to be changed during the simulation here
 	@Override
-	public void softReset(boolean arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public LinkedList<Observer> getObservers() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public float getProsperity() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void publishProsperity() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void buildConfigSubscribers(ConnectedNode arg0) {
-		// TODO Auto-generated method stub
-
-	}
+	protected void buildConfigSubscribers(ConnectedNode arg0) {}
 
 	@Override
 	protected void buildDataIO(ConnectedNode arg0) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public ProsperityObserver getProsperityObserver() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public LinkedList<Observer> getObservers() { return null; }
+
+	@Override
+	public ProsperityObserver getProsperityObserver() { return null; }
+	
+	@Override
+	public void publishProsperity() {}
+	
+	@Override
+	public float getProsperity() { return 0; }
 
 	@Override
 	public void onStart(ConnectedNode connectedNode) {
@@ -127,7 +105,7 @@ public class AbstractGridWorldNode extends AbstractConfigurableHannsNode{
 		this.registerParameters();
 		paramList.printParams();
 		this.parseParameters(connectedNode);
-		//this.registerObservers();	// TODO
+		//this.registerObservers();	// probably will be unused (using logs to console)
 		System.out.println(me+"initializing ROS Node IO");
 
 		super.fullName = super.getFullName(connectedNode);
