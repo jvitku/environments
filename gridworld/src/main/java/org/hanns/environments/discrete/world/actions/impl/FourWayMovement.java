@@ -1,8 +1,8 @@
 package org.hanns.environments.discrete.world.actions.impl;
 
-public class Movement extends AbstractAction{
+public class FourWayMovement extends MovementAction{
 
-	public Movement(int direction){
+	public FourWayMovement(int direction){
 		if(direction<0 || direction>3){
 			System.err.println("Only moving in 4 directions {0,1,2,3} is allowed here!");
 		}

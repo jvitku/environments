@@ -1,8 +1,11 @@
 package org.hanns.environments.discrete.world.impl;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.hanns.environments.discrete.world.GridWorldInt;
+import org.hanns.environments.discrete.world.actions.Action;
+import org.hanns.environments.discrete.world.actions.impl.FourWayMovement;
+import org.hanns.environments.discrete.world.actions.impl.MovementAction;
 import org.hanns.environments.discrete.world.objects.Tale;
 import org.hanns.environments.discrete.world.objects.impl.Empty;
 import org.hanns.environments.discrete.world.objects.impl.RewardSource;
@@ -15,14 +18,16 @@ public class GridWorld implements GridWorldInt{
 	
 	protected final Tale[][] map;
 	
-	protected ArrayList<String> rewardTypes;
-	protected int[] rewards;	// one source produces one reward (currently), so encoding 0/1ofN
+	protected HashMap<String, Integer> rewardTypes;
+	private int numRewardTypes = 0;	// used for indexing an array returned by the getRewards() 
+	
+	protected float[] rewards;	// one source produces one reward (currently), so encoding 0/1ofN
 	
 	public GridWorld(int sx, int sy) {
 		this.sx = sx;
 		this.sy = sy;
 		
-		rewardTypes = new ArrayList<String>();	// list of unique reward names
+		rewardTypes = new HashMap<String, Integer>();	
 		
 		map = new Tale[sx][sy];
 		for(int i=0; i<sy; i++){
@@ -41,9 +46,9 @@ public class GridWorld implements GridWorldInt{
 		map[x][y] = object;	// place into the map
 		
 		if(object instanceof RewardSource){
-			// new type? add it
-			if(!this.rewardTypeRegistered(((RewardSource)object).getRewardType())){
-				rewardTypes.add(((RewardSource)object).getRewardType());
+			
+			if(!this.rewardTypes.containsKey(((RewardSource)object).getRewardType())){
+				rewardTypes.put(((RewardSource)object).getRewardType(), numRewardTypes++);
 			}
 		}
 	}
@@ -54,54 +59,79 @@ public class GridWorld implements GridWorldInt{
 	@Override
 	public int getSY() { return sy; }
 	
-	/**
-	 * TODO test this
-	 * TODO update rewards here
-	 */
 	@Override
-	public void makeStep(int action) {
-
+	public void makeStep(Action a) {
+		
 		this.updatePrevPos();			// store the original position
 		
-		if(action==0){ 					// left
-			if(current[0] > 0){
-				if(!map[current[0]-1][current[1]].isObstacle()){ // if obstacle, position remains the same
-					current[0]--;
-					//coords[0] = current[0]-1;
-				}
-			}
-		}else if(action==1){ 			// right
-			if(current[0] < sx-1){
-				if(!map[current[0]+1][current[1]].isObstacle())
-					current[0]++;
-					//coords[0] = current[0]+1;
-			}
-		}else if(action==2){ 			// up 
-			if(current[1] < sy-1){
-				if(!map[current[0]][current[1]+1].isObstacle())
-					//coords[1] = current[1]+1;
-					current[1]++;
-			}
-		}else if(action==3){ 			// down
-			if(current[1] > 0){
-				if(!map[current[0]][current[1]-1].isObstacle())
-					//coords[1] = current[1]-1;
-					current[1]--;
-			}
-		}else if(action == -1){			// NOOP
-			assert true;
-		}else{
-			System.err.println("unrecognized action! "+action);
-		}
+		this.updateCustomActions(a);
+		this.updateMovementActions(a);
+		
 		this.updateRewards();			// update data about current rewards produced
 		return;
+	}
+	
+
+	@Override
+	public void updateCustomActions(Action a) {
+		if(a instanceof MovementAction)
+			return;
+		// TODO potentially add some custom actions (pickup, putdown..)
+	}
+
+	@Override
+	public void updateMovementActions(Action a) {
+		if(a instanceof MovementAction){
+			if(a instanceof FourWayMovement){
+				
+				int action = ((FourWayMovement)a).getNumber();
+
+				if(action==0){ 					// left
+					if(current[0] > 0){
+						if(!map[current[0]-1][current[1]].isObstacle()){ // if obstacle, position remains the same
+							current[0]--;
+							//coords[0] = current[0]-1;
+						}
+					}
+				}else if(action==1){ 			// right
+					if(current[0] < sx-1){
+						if(!map[current[0]+1][current[1]].isObstacle())
+							current[0]++;
+							//coords[0] = current[0]+1;
+					}
+				}else if(action==2){ 			// up 
+					if(current[1] < sy-1){
+						if(!map[current[0]][current[1]+1].isObstacle())
+							//coords[1] = current[1]+1;
+							current[1]++;
+					}
+				}else if(action==3){ 			// down
+					if(current[1] > 0){
+						if(!map[current[0]][current[1]-1].isObstacle())
+							//coords[1] = current[1]-1;
+							current[1]--;
+					}
+				}else if(action == -1){			// NOOP
+					assert true;
+				}else{
+					System.err.println("unrecognized action! "+action);
+				}
+			}else{
+				// TODO potentially support e.g. 8-way movements if needed
+				System.err.println("ERROR: only FourWayMovement actions are supported for now!");
+			}
+		}
 	}
 
 	@Override
 	public int[] getPosition() { return current.clone(); }
 
 	@Override
-	public int[] getRewards() {	return this.rewards.clone(); }
+	public float[] getRewards() {	return this.rewards.clone(); }
+	
+	// this should be constant during the simulation
+	@Override
+	public int getNumRewardTypes(){ return this.numRewardTypes; }
 
 	/**
 	 * Visualize the map, axes are as usual, x (first index) is horizontal increasing to the right,
@@ -138,39 +168,33 @@ public class GridWorld implements GridWorldInt{
 		return ind;
 	}
 
+	private Tale getCurrentTale(){ return map[current[0]][current[1]]; }
+	
 	private void updatePrevPos(){
 		previous[0] = current[0];
 		previous[1] = current[1];
 	}
+
+	private void cleanRewards(){
+		this.rewards = new float[this.getNumRewardTypes()];
+		for(int i=0; i<this.getNumRewardTypes(); i++){
+			this.rewards[i] = 0;
+		}
+	}
 	
 	/**
-	 * 
+	 * Read current reward(s) and store them in one vector of reward types
 	 */
 	private void updateRewards(){
 		// agent either stays (no reward) or moves (only one reward on new coords.) 
-		this.rewards = new int[this.rewardTypes.size()];
+		this.cleanRewards();
 		if(!this.hasMoved()){
 			return;
 		}
-		if(map[current[0]][current[1]] instanceof RewardSource){
-			// TODO arrayList or Map here?
+		if(this.getCurrentTale() instanceof RewardSource){
+			RewardSource rs = (RewardSource)this.getCurrentTale();
+			this.rewards[this.rewardTypes.get(rs.getRewardType())] = rs.getRewardVal();
 		}
-			
-	}
-
-	/**
-	 * @param type what to search for
-	 * @return true if the reward type is already registered
-	 */
-	private boolean rewardTypeRegistered(String type){
-		if(rewardTypes.isEmpty())
-			return false;
-		
-		for(int i=0; i<rewardTypes.size(); i++){
-			if(rewardTypes.get(i).equalsIgnoreCase(type))
-				return true;
-		}
-		return false;
 	}
 	
 	@Override

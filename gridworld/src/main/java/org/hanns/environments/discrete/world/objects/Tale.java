@@ -15,6 +15,6 @@ public interface Tale{
 	
 	public String getLabel();
 	
-	public float getReward();
+	public float getRewardVal();
 
 }

@@ -4,6 +4,5 @@ public interface Action {
 
 	public String getLabel();	// visualization
 	
-	public int getNumber();		
-	
+	public int getNumber();
 }

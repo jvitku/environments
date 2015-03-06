@@ -20,6 +20,6 @@ public abstract class AbsTale implements Tale{
 	public String getLabel() { return this.label; }
 
 	@Override
-	public float getReward() { return this.reward; }
+	public float getRewardVal() { return this.reward; }
 
 }
