@@ -67,7 +67,6 @@ For example how to use the QLambda node, start the Nengoros simulator and write 
 
 	TODO
 
-
 TODO and Design Details
 -----------------------
 
@@ -89,7 +88,6 @@ Node configuration is defined on two main levels:
 
 	Or several possibilities from above which cane be turned on/off by the static configuration.
 
-### Configuration
 
 #### Inputs Outputs
 
@@ -117,12 +115,21 @@ Node configuration is defined on two main levels:
 
 After launching the node:
 
-* the algorithm is setup (if no configuration parameters found, the default ones are loaded) 
+* the algorithm is setup (if no commandline configuration parameters found, the default ones are loaded) 
 * then the node waits for received action
 * if the action is received, the world rules are applied and the resulting state together with reinforcement is sent back (published)
 
-
 ## Changelog
+
+* support for lists of integers passed as commandline parameters added (define all the world properties from commandline)
+
+* the GridWorld completely reworked, changes are:
+
+	* tales made as classes (tale has name, kind..)
+	* rewards can have arbitrary float value (punishments supported)
+	* rewards support multiple reward types
+	* world can have arbitrary no. of rewards and reward types
+	* world is configurable on the startup
 
 * added dependency on the `statesactions` project
 
@@ -145,17 +152,14 @@ After launching the node:
 
 ## TODO
 
-
 * cleanup this TODO 
 
-* add repelors (allow reward values to be < 0)
+* add the `ros.GridWorldNode` class and test it
+
+* Add also the NOOP action everywhere (index is -1)
 		
-* Reinforcement and the state description (data inputs to the RL module) should be in one message (potentially asynchronous comm.) but these could be splited in the Nengo interface into two inputs (also on other places)
-
 * Define the Observer interface for the GridWorldNode, call observers.observe() each step..
-
-* Implement read/save of the GridWorldMap (currently, each map has own class..)
 
 * Unit tests: fail after predefined time? If one of tested nodes ends with an exception, the other waits indefinitely.
 
-* Add also the NOOP action everywhere (index is -1)
+
