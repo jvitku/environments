@@ -103,11 +103,15 @@ public class GridWorldNode extends AbstractGridWorldNode{
 
 		/**
 		 * State publisher - connect to the input-data topic of (.e.g.) QLambda
+		 * 
+		 * Note that environments publish to topic named topicDataIn -> normal nodes receive these messages
 		 */
 		statePublisher = connectedNode.newPublisher(AbstractHannsNode.topicDataIn, std_msgs.Float32MultiArray._TYPE);
 
 		/**
 		 * Action subscriber = subscribe to agents actions, process agents requests for simulating one step
+		 * 
+		 * Note that environments subscribe to topic named topicDataOut -> receive topicDataOut from normal nodes
 		 */
 		Subscriber<std_msgs.Float32MultiArray> actionSub = 
 				connectedNode.newSubscriber(AbstractHannsNode.topicDataOut, std_msgs.Float32MultiArray._TYPE);

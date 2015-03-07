@@ -5,7 +5,7 @@ import org.hanns.environments.discrete.world.objects.Tale;
 public abstract class AbsTale implements Tale{
 	
 	public static final String EMPTY = ".";
-	public static final String OBSTACLE = "x";
+	public static final String OBSTACLE = "X";
 	
 	// default tale is an empty one
 	protected boolean isObstacle = false;
