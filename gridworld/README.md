@@ -121,7 +121,7 @@ After launching the node:
 
 ## Changelog
 
-* the `ros.AbstractGridWorldNode` added and works, TODO: add the world to the node
+* the `ros.AbstractGridWorldNode` is fully configurable, contains the `GridWorld` simulator and waits for connections. TODO test it with some agent.
 
 * support for lists of integers passed as commandline parameters added (define all the world properties from commandline)
 

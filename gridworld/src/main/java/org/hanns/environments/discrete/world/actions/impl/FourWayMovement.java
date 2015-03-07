@@ -1,5 +1,13 @@
 package org.hanns.environments.discrete.world.actions.impl;
 
+/**
+ * Defines action.
+ * 
+ * TODO should be unified with statesactions project more.
+ * 
+ * @author Jaroslav Vitku
+ *
+ */
 public class FourWayMovement extends MovementAction{
 
 	public FourWayMovement(int direction){
