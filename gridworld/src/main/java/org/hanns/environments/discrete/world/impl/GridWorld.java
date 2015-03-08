@@ -12,6 +12,8 @@ import org.hanns.environments.discrete.world.objects.impl.RewardSource;
 
 public class GridWorld implements GridWorldInt{
 
+	public static String AGENT_LABEL = "A";
+	
 	protected final int sx, sy;
 	protected final int[] current = {0,0};	// current position (before step)
 	protected final int[] previous = {0,0};	// previous position
@@ -163,13 +165,18 @@ public class GridWorld implements GridWorldInt{
 		for(int i=sx-1; i>=0; i--){
 			for(int j=0; j<sy; j++){
 
-				line = line + "\t "+map[j][i].getLabel();
-				
+				if(this.isAgentHere(i, j)){
+					line = line + "\t "+AGENT_LABEL;
+				}else{
+					line = line + "\t "+map[j][i].getLabel();
+				}
 			}
 			line = line+"\n";
 		}
 		return line+"\n-------------------------------------";
 	}
+	
+	private boolean isAgentHere(int x, int y){ return (x==current[0] && y==current[1]); }
 
 	@Override
 	public int getMaxActionInd(Double[] actions) {

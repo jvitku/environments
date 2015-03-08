@@ -9,19 +9,25 @@ import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Subscriber;
 
 import ctu.nengoros.network.node.AbstractConfigurableHannsNode;
+import ctu.nengoros.network.node.infrastructure.rosparam.impl.PrivateRosparam;
+import ctu.nengoros.network.node.infrastructure.rosparam.manager.ParamList;
 import ctu.nengoros.network.node.observer.Observer;
 import ctu.nengoros.network.node.observer.stats.ProsperityObserver;
-import ctu.nengoros.util.SL;
 
 public class RandomMovingAgent extends AbstractConfigurableHannsNode{
 
 	public static final String name = "RandomAgent";
 
-	private int step = 0;
-	private Random r = new Random();
+	private Random rand = new Random();
 	
 	public static int DEF_DATALEN = 3;	// one reward + X,Y
 	public static int DEF_NOACTIONS = 4;
+
+
+	// no of allowed actions (1ofN code)
+	public static final String delayConf = "delay";
+	public static final int DEF_DELAY = 10; // 10ms wait after new message 
+	protected int delay;
 	
 	@Override
 	public GraphName getDefaultNodeName() { return GraphName.of(name); }
@@ -30,8 +36,11 @@ public class RandomMovingAgent extends AbstractConfigurableHannsNode{
 	public void onStart(final ConnectedNode connectedNode) {
 		log = connectedNode.getLog();
 		log.info(me+"started");
+		this.registerParameters();
+		paramList.printParams();
 		super.fullName = super.getFullName(connectedNode);
 
+		this.parseParameters(connectedNode);
 		this.registerSimulatorCommunication(connectedNode);
 		this.buildDataIO(connectedNode);
 
@@ -64,11 +73,15 @@ public class RandomMovingAgent extends AbstractConfigurableHannsNode{
 					for(int i=0; i<actions.length; i++){
 						actions[i]=0;
 					}
-					actions[r.nextInt(actions.length)] = 1;
-					
-					std_msgs.Float32MultiArray fl = dataPublisher.newMessage();
-					fl.setData(actions);
-					dataPublisher.publish(fl);
+					try {
+						Thread.sleep(delay);
+						actions[rand.nextInt(actions.length)] = 1;
+						std_msgs.Float32MultiArray fl = dataPublisher.newMessage();
+						fl.setData(actions);
+						dataPublisher.publish(fl);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		});
@@ -116,10 +129,23 @@ public class RandomMovingAgent extends AbstractConfigurableHannsNode{
 
 
 	@Override
-	protected void parseParameters(ConnectedNode arg0) {}
+	protected void parseParameters(ConnectedNode connectedNode) {
+		r = new PrivateRosparam(connectedNode);
+		System.out.println(me+"parsing parameters");
+		delay = r.getMyInteger(delayConf, DEF_DELAY);
+		if(delay<0){
+			delay=0;
+		}
+	}
 
 	@Override
-	protected void registerParameters() {}
+	protected void registerParameters() {
+		paramList = new ParamList();
+
+		paramList.addParam(delayConf, ""+DEF_DELAY,
+				"How many ms to wait before responding with new action");
+		
+	}
 
 
 }

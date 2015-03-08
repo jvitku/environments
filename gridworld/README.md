@@ -121,6 +121,10 @@ After launching the node:
 
 ## Changelog
 
+* added visualization of agent's position
+
+* added randomAgent which tests the `GridWorldNode`
+
 * the `ros.AbstractGridWorldNode` is fully configurable, contains the `GridWorld` simulator and waits for connections. TODO test it with some agent.
 
 * support for lists of integers passed as commandline parameters added (define all the world properties from commandline)
