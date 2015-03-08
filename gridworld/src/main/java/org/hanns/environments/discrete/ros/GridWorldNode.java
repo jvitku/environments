@@ -202,6 +202,7 @@ public class GridWorldNode extends AbstractGridWorldNode{
 					published = encodeStateRewardMessage(world.getRewards(),world.getPosition());
 					log.info(me+"No agent detected, publishing the current [rewards+state] "+
 							SL.toStr(published));
+					System.out.println(world.vis());
 					std_msgs.Float32MultiArray fl = statePublisher.newMessage();
 					fl.setData(published);  
 					statePublisher.publish(fl);

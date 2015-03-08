@@ -13,7 +13,15 @@ import ctu.nengoros.network.node.infrastructure.rosparam.impl.PrivateRosparam;
 import ctu.nengoros.network.node.infrastructure.rosparam.manager.ParamList;
 import ctu.nengoros.network.node.observer.Observer;
 import ctu.nengoros.network.node.observer.stats.ProsperityObserver;
+import ctu.nengoros.util.SL;
 
+/**
+ * A simple agent that runs randomly in the environment and collects rewards/punishments.
+ * Just run jroscore and both: the GridWorlNode and this RandomMovingAgent.
+ * 
+ * @author Jaroslav Vitku
+ *
+ */
 public class RandomMovingAgent extends AbstractConfigurableHannsNode{
 
 	public static final String name = "RandomAgent";
@@ -61,19 +69,33 @@ public class RandomMovingAgent extends AbstractConfigurableHannsNode{
 				connectedNode.newSubscriber(topicDataIn, std_msgs.Float32MultiArray._TYPE);
 
 		dataSub.addMessageListener(new MessageListener<std_msgs.Float32MultiArray>(){
+			
+			void checkRewards(float[] message){
+				for(int i=0; i<message.length-2; i++){
+					if(message[i]>0){
+						System.out.println("REWARD received!!!!");
+					}else if(message[i]<0){
+						System.out.println("PUNISHMENT received!!!!");
+					}
+				}
+			}
+			
 			@Override
 			public void onNewMessage(std_msgs.Float32MultiArray message){
 				float[] data = message.getData();
 				
-				if(data.length != DEF_DATALEN)
+				if(data.length < 2)
 					log.error(me+":"+topicDataIn+": Received state description has" +
-							"unexpected length of"+data.length+"! Expected: "+ DEF_DATALEN);
+							"insufficient length of"+data.length+" ! Expected at least 2 values (X,Y)");
 				else{
 					float[] actions = new float[DEF_NOACTIONS];
 					for(int i=0; i<actions.length; i++){
 						actions[i]=0;
 					}
 					try {
+						System.out.println("received the following data: "+SL.toStr(data));
+						this.checkRewards(data);
+
 						Thread.sleep(delay);
 						actions[rand.nextInt(actions.length)] = 1;
 						std_msgs.Float32MultiArray fl = dataPublisher.newMessage();
@@ -119,10 +141,8 @@ public class RandomMovingAgent extends AbstractConfigurableHannsNode{
 	@Override
 	public void publishProsperity() {}
 
-
 	@Override
 	protected void buildConfigSubscribers(ConnectedNode arg0) {}
-
 
 	@Override
 	public ProsperityObserver getProsperityObserver() { return null; }

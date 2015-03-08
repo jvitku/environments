@@ -10,6 +10,8 @@ import org.hanns.environments.discrete.world.objects.Tale;
 import org.hanns.environments.discrete.world.objects.impl.Empty;
 import org.hanns.environments.discrete.world.objects.impl.RewardSource;
 
+import ctu.nengoros.util.SL;
+
 public class GridWorld implements GridWorldInt{
 
 	public static String AGENT_LABEL = "A";
@@ -161,18 +163,31 @@ public class GridWorld implements GridWorldInt{
 	 */
 	@Override
 	public String vis(){
-		String line = "------------------------------------\n";
+		System.out.println("map dimensions: "+sx+" "+sy);
+		String line = "------------------------------------ pos: "+SL.toStr(current)+"\n";
+		for(int i=sy-1; i>=0; i--){
+			for(int j=0; j<sx; j++){
+
+				if(this.isAgentHere(j,i)){
+					line = line + "\t "+AGENT_LABEL;
+				}else{
+					line = line + "\t "+map[j][i].getLabel(); // TODO problem here!
+				}
+			}
+			line = line+"\n";
+		}
+		/*
 		for(int i=sx-1; i>=0; i--){
 			for(int j=0; j<sy; j++){
 
 				if(this.isAgentHere(i, j)){
 					line = line + "\t "+AGENT_LABEL;
 				}else{
-					line = line + "\t "+map[j][i].getLabel();
+					line = line + "\t "+map[j][i].getLabel(); // TODO problem here!
 				}
 			}
 			line = line+"\n";
-		}
+		}*/
 		return line+"\n-------------------------------------";
 	}
 	

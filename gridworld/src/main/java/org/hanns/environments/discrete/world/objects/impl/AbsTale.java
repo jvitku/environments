@@ -12,7 +12,6 @@ public abstract class AbsTale implements Tale{
 	protected float reward = 0;
 	protected String label = AbsTale.EMPTY;
 
-
 	@Override
 	public boolean isObstacle() { return this.isObstacle;	}
 
