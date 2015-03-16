@@ -6,7 +6,7 @@ package org.hanns.environments.discrete.world.objects.impl;
  * @author Jaroslav Vitku
  *
  */
-public class Empty {
+public class Empty extends AbsTale{
 	
 	public Empty(){
 	}

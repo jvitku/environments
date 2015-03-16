@@ -7,6 +7,14 @@ public interface GridWorldInt{
 	
 	public int getSX();
 	public int getSY();
+
+	/**
+	 * Immediately teleports the agent on new place (reset etc..)	
+	 * @param position new position of the agent
+	 * @param warn print warning into the console?
+	 * @return true if the teleportation can be done (no obstacle and no out ot map)
+	 */
+	public boolean teleportAgentTo(int[] position, boolean warn);
 	
 	/**
 	 * Receive one action, apply it, infer world constraints and make sim. step 

@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import org.ros.namespace.GraphName;
 import org.ros.node.ConnectedNode;
-
+import org.ros.node.topic.Publisher;
 import ctu.nengoros.network.node.AbstractConfigurableHannsNode;
 import ctu.nengoros.network.node.infrastructure.rosparam.impl.PrivateRosparam;
 import ctu.nengoros.network.node.infrastructure.rosparam.manager.ParamList;
@@ -26,6 +26,12 @@ public abstract class AbstractGridWorldNode extends AbstractConfigurableHannsNod
 	public static final int[] DEF_SIZE = new int[]{DXS,DYS};
 	protected int[] worldSize;
 
+	// no of allowed actions (1ofN code)
+	public static final String actionsConf = "noActions";
+	public static final int DEF_NOACTIONS = 4; // 4 directions 
+	protected int noActions = DEF_NOACTIONS;
+	
+	// starting position
 	public static final String posConf = "agentPos";
 	public static final int[] DEF_AGENTPOS = new int[]{0,0};
 	protected int[] agentInitPosition;
@@ -54,6 +60,10 @@ public abstract class AbstractGridWorldNode extends AbstractConfigurableHannsNod
 		int[] types;		// rewards can have different types (food/water..) 
 	};
 	
+	////////////////// ROS stuff
+	protected Publisher<std_msgs.Float32MultiArray> statePublisher;
+	protected LinkedList<Observer> observers;
+	
 	@Override
 	public GraphName getDefaultNodeName() { return GraphName.of(name); }
 
@@ -81,12 +91,7 @@ public abstract class AbstractGridWorldNode extends AbstractConfigurableHannsNod
 	protected void buildConfigSubscribers(ConnectedNode arg0) {}
 
 	@Override
-	protected void buildDataIO(ConnectedNode arg0) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public LinkedList<Observer> getObservers() { return null; }
+	public LinkedList<Observer> getObservers() { return this.observers; }
 
 	@Override
 	public ProsperityObserver getProsperityObserver() { return null; }
@@ -107,9 +112,9 @@ public abstract class AbstractGridWorldNode extends AbstractConfigurableHannsNod
 		this.parseParameters(connectedNode);
 		//this.registerObservers();	// probably will be unused (using logs to console)
 		System.out.println(me+"initializing ROS Node IO");
-
 		super.fullName = super.getFullName(connectedNode);
-		System.out.println(me+"Node configured and ready now!");
+		this.observers = new LinkedList<Observer>(); // TODO: observing is not supported so far
+		this.registerSimulatorCommunication(connectedNode);
 	}
 
 	@Override
@@ -123,6 +128,8 @@ public abstract class AbstractGridWorldNode extends AbstractConfigurableHannsNod
 		worldSize =this.checkSizes(r.getMyIntegerList(sizeConf, DEF_SIZE));
 		System.out.println("OK, world parameters parsed as: "+SL.toStr(worldSize));
 
+		noActions = this.checkNoActions(r.getMyInteger(actionsConf, DEF_NOACTIONS));
+		
 		agentInitPosition = this.checkAgentPos(r.getMyIntegerList(posConf, DEF_AGENTPOS));
 		
 		obstaclePositions = this.checkObstacles(r.getMyIntegerList(obstaclesConf, DEF_OBSTACLE));
@@ -178,6 +185,13 @@ public abstract class AbstractGridWorldNode extends AbstractConfigurableHannsNod
 			rc.values[i] = list[pos+3];
 			pos+=4;
 		}
+	}
+	
+	private int checkNoActions(int no){
+		if(noActions!=4){
+			System.err.println("ERROR: only 4 actions are supported so far!");
+		}
+		return 4;
 	}
 	
 	private int[] checkAgentPos(int[] pos){
@@ -260,7 +274,6 @@ public abstract class AbstractGridWorldNode extends AbstractConfigurableHannsNod
 		return sizes;
 	}
 
-
 	/**
 	 * NoInputs == noActions allowed
 	 * NoOutputs == X&Y pos. + noRewardTypes registered 
@@ -268,19 +281,16 @@ public abstract class AbstractGridWorldNode extends AbstractConfigurableHannsNod
 	@Override
 	protected void registerParameters() {
 		paramList = new ParamList();
-		// TODO IO
-		paramList.addParam(noInputsConf, ""+DEF_NOINPUTS,"Number of state variables");
-		paramList.addParam(noOutputsConf, ""+DEF_NOOUTPUTS,"Number of actions available to the agent (1ofN coded)");
+
 		paramList.addParam(logToFileConf, ""+DEF_LTF, "Enables logging into file");
 		paramList.addParam(logPeriodConf, ""+DEF_LOGPERIOD, "How often to log?");
 		paramList.addParam(randomizeConf, ""+DEF_RANDOMIZE, "Should allow RANDOMIZED reset from Nengo?");
 
 		paramList.addParam(sizeConf, SL.toStr(DEF_SIZE), "List of two integers determining X, Y size of the map");
+		paramList.addParam(actionsConf, ""+DEF_NOACTIONS,"Number of actions allowed by the agent (1ofN coded)");
 		paramList.addParam(posConf, SL.toStr(DEF_AGENTPOS), "Two integers determining X, Y starting position of the agent");
 		paramList.addParam(obstaclesConf, SL.toStr(DEF_OBSTACLE), "List (even no.) of coordinates (X1,Y1,X2,Y2..) of obstacles");
 		paramList.addParam(rewardConf, SL.toStr(DEF_REWARD), "List defining rewards as follows (X1,Y1,R1Type,R1Val,X2,Y2,..).");
 	}
-
-
 
 }

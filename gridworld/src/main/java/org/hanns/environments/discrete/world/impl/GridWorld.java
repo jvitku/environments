@@ -10,8 +10,12 @@ import org.hanns.environments.discrete.world.objects.Tale;
 import org.hanns.environments.discrete.world.objects.impl.Empty;
 import org.hanns.environments.discrete.world.objects.impl.RewardSource;
 
+import ctu.nengoros.util.SL;
+
 public class GridWorld implements GridWorldInt{
 
+	public static String AGENT_LABEL = "A";
+	
 	protected final int sx, sy;
 	protected final int[] current = {0,0};	// current position (before step)
 	protected final int[] previous = {0,0};	// previous position
@@ -28,6 +32,7 @@ public class GridWorld implements GridWorldInt{
 		this.sy = sy;
 		
 		rewardTypes = new HashMap<String, Integer>();	
+		rewards = new float[0];	// changed while the new reward type is added
 		
 		map = new Tale[sx][sy];
 		for(int i=0; i<sy; i++){
@@ -35,6 +40,23 @@ public class GridWorld implements GridWorldInt{
 				map[j][i] = (Tale) new Empty();	// fill with empty tales at first
 			}
 		}
+	}
+	
+	@Override
+	public boolean teleportAgentTo(int[] position, boolean warn){
+		if(position[0]<0 || position[1]<0 || position[0]>=sx || position[1]>=sy){
+			if(warn)
+				System.err.println("ERROR: cannot teleport the agent outside the map! Ignoring..");
+			return false;
+		}
+		if(map[position[0]][position[1]].isObstacle()){
+			if(warn)
+				System.err.println("ERROR: cannot teleport the agent outside the map! Ignoring..");
+			return false;
+		}
+		current[0] = position[0];
+		current[1] = position[1];
+		return true;
 	}
 	
 	@Override
@@ -49,6 +71,7 @@ public class GridWorld implements GridWorldInt{
 			
 			if(!this.rewardTypes.containsKey(((RewardSource)object).getRewardType())){
 				rewardTypes.put(((RewardSource)object).getRewardType(), numRewardTypes++);
+				rewards = new float[this.getNumRewardTypes()];
 			}
 		}
 	}
@@ -127,7 +150,7 @@ public class GridWorld implements GridWorldInt{
 	public int[] getPosition() { return current.clone(); }
 
 	@Override
-	public float[] getRewards() {	return this.rewards.clone(); }
+	public float[] getRewards() { return this.rewards.clone(); }
 	
 	// this should be constant during the simulation
 	@Override
@@ -140,17 +163,35 @@ public class GridWorld implements GridWorldInt{
 	 */
 	@Override
 	public String vis(){
-		String line = "------------------------------------\n";
-		for(int i=sx-1; i>=0; i--){
-			for(int j=0; j<sy; j++){
+		System.out.println("map dimensions: "+sx+" "+sy);
+		String line = "------------------------------------ pos: "+SL.toStr(current)+"\n";
+		for(int i=sy-1; i>=0; i--){
+			for(int j=0; j<sx; j++){
 
-				line = line + "\t "+map[j][i].getLabel();
-				
+				if(this.isAgentHere(j,i)){
+					line = line + "\t "+AGENT_LABEL;
+				}else{
+					line = line + "\t "+map[j][i].getLabel(); // TODO problem here!
+				}
 			}
 			line = line+"\n";
 		}
+		/*
+		for(int i=sx-1; i>=0; i--){
+			for(int j=0; j<sy; j++){
+
+				if(this.isAgentHere(i, j)){
+					line = line + "\t "+AGENT_LABEL;
+				}else{
+					line = line + "\t "+map[j][i].getLabel(); // TODO problem here!
+				}
+			}
+			line = line+"\n";
+		}*/
 		return line+"\n-------------------------------------";
 	}
+	
+	private boolean isAgentHere(int x, int y){ return (x==current[0] && y==current[1]); }
 
 	@Override
 	public int getMaxActionInd(Double[] actions) {

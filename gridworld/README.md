@@ -63,9 +63,6 @@ The standard jython scripts are included in the `environments/gridworld/python` 
 
 	./linkdata -cf ../environments/gridworld
 	
-For example how to use the QLambda node, start the Nengoros simulator and write the following command into the console:
-
-	TODO
 
 TODO and Design Details
 -----------------------
@@ -119,9 +116,29 @@ After launching the node:
 * then the node waits for received action
 * if the action is received, the world rules are applied and the resulting state together with reinforcement is sent back (published)
 
+## Example of Use
+
+Run the GridWorldNode and the testnodes.RandomlyMovingAgent as follows:
+	
+	cd environments/gridworld
+	./jroscore
+	./world
+	./randomAgent
+
+or with some parameters:
+
+	./world _logPeriod:=1 _obstacles:=0,2 _size:=2,10 _rewards:=1,5,1,1,0,6,2,-1
+	./randomAgent _delay:=150
+	
 ## Changelog
 
-* the `ros.AbstractGridWorldNode` added and works, TODO: add the world to the node
+* agent's and environment's correct behavior tested
+
+* added visualization of agent's position
+
+* added randomAgent which tests the `GridWorldNode`
+
+* the `ros.AbstractGridWorldNode` is fully configurable, contains the `GridWorld` simulator and waits for connections. TODO test it with some agent.
 
 * support for lists of integers passed as commandline parameters added (define all the world properties from commandline)
 
@@ -153,9 +170,6 @@ After launching the node:
 
 
 ## TODO
-
-
-* Add also the NOOP action everywhere (index is -1)
 		
 * Define the Observer interface for the GridWorldNode, call observers.observe() each step..
 
