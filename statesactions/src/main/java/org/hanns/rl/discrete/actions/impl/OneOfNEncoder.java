@@ -43,18 +43,25 @@ public class OneOfNEncoder implements ActionEncoder{
 			throw new DecoderException("OneOfNEncoder: message has incorrect length! " +
 					"Expected "+set.getNumOfActions()+" and found "+data.length);
 
-		int index = ActionSet.NOOP;	// no action index
+		//int index = ActionSet.NOOP;	// no action index
 
-		for(int i=0; i<data.length; i++){
-			if(data[i] == selected){
-				if(index != -1){
-					throw new DecoderException("oneOfNEncoder: found more than one" +
-							" selected values!");
-				}
+		int index = 0;
+		boolean found = false;
+		
+		if(data[index] != 0){
+			found = true;
+		}
+		
+		for(int i=1; i<data.length; i++){
+			if(data[i] > data[index]){
+				found = true;
 				index = i;
 			}
 		}
-		return index;
+		if(found){
+		 return index;
+		}
+		return ActionSet.NOOP;
 	}
 
 	private void setNotSelected(float[] input){

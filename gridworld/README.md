@@ -132,6 +132,8 @@ or with some parameters:
 	
 ## Changelog
 
+* world now parses more tolerantly also input actions (max utility)
+
 * agent's and environment's correct behavior tested
 
 * added visualization of agent's position

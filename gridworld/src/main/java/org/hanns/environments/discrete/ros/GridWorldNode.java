@@ -32,21 +32,21 @@ public class GridWorldNode extends AbstractGridWorldNode{
 	protected boolean dataExchanged = false;
 	protected volatile boolean simPaused = false;
 	protected int step = 0;
-	
+
 	protected BasicVariableEncoder posXEncoder;	// different resolutions in different dimensions
 	protected BasicVariableEncoder posYEncoder;
-	
+
 	protected OneOfNEncoder actionEncoder;
 	protected ActionSetInt actionSet; 
 
 	private GridWorld world;
-	
+
 	@Override
 	public void onStart(ConnectedNode connectedNode) {
 		super.onStart(connectedNode);
-		
+
 		this.initData();
-		
+
 		this.buildDataIO(connectedNode);
 		System.out.println(me+"Node configured and ready now!");
 		this.waitForConnections(connectedNode);
@@ -56,13 +56,13 @@ public class GridWorldNode extends AbstractGridWorldNode{
 		// need to encode x values in one float {0,1}
 		posXEncoder = new BasicVariableEncoder(0,1, this.worldSize[0]);
 		posYEncoder = new BasicVariableEncoder(0,1, this.worldSize[1]);
-		
+
 		actionSet = new BasicFinalActionSet(new String[]{"<",">","^","v"});
 		actionEncoder = new OneOfNEncoder(actionSet);
-		
+
 		// initialize the world and place there all the stuff 
 		world = new GridWorld(this.worldSize[0], this.worldSize[1]);
-		
+
 		for(int i=0; i<super.obstaclePositions[0].length; i++){
 			world.placeObject(new Obstacle(),
 					super.obstaclePositions[0][i], super.obstaclePositions[1][i]);
@@ -73,14 +73,14 @@ public class GridWorldNode extends AbstractGridWorldNode{
 		}
 		this.hardReset(false);
 	}
-	
+
 	@Override
 	public void hardReset(boolean randomize) {
 
 		this.step =0;
 		this.dataExchanged = false;
 		this.simPaused = false;
-		
+
 		if(randomize && super.randomizeAllowed){
 			int maxAttempts = 10000;	// if the map is full of obstacles, the program could hang here
 			int attempt = 0;
@@ -97,7 +97,7 @@ public class GridWorldNode extends AbstractGridWorldNode{
 			world.teleportAgentTo(agentInitPosition, true);
 		}
 	}
-	
+
 	@Override
 	protected void buildDataIO(ConnectedNode connectedNode){
 
@@ -127,8 +127,19 @@ public class GridWorldNode extends AbstractGridWorldNode{
 				}else{
 					// try to decode action, if success, make simulation step and response with new data
 					try {
+						step++;
+						
+						System.out.println("xxxy asdfasd "+SL.toStr(data));
+						
 						dataExchanged = true;
 						int action = actionEncoder.decode(data);
+						
+						/*
+						if(action == -1){
+							System.out.println("NOOP received, skipping the step");
+							return;
+						}
+						*/
 						Action a = new FourWayMovement(action);
 
 						if((step)%logPeriod == 0)
@@ -137,16 +148,16 @@ public class GridWorldNode extends AbstractGridWorldNode{
 
 						// make step
 						world.makeStep(a);
-						
+
 						// read and send the data
 						std_msgs.Float32MultiArray fl = statePublisher.newMessage();
 						fl.setData(encodeStateRewardMessage(world.getRewards(),world.getPosition()));
 						statePublisher.publish(fl);	// send a response with reinforcement and new state
-						
+
 						//state = newState.clone(); // TODO why this?
 
 						// log if needed
-						if((step++) % logPeriod==0){
+						if((step) % logPeriod==0){
 							System.out.println(me+"Responding with this message [rewards,position] "+
 									SL.toStr(encodeStateRewardMessage(world.getRewards(),world.getPosition())));
 							System.out.println(world.vis());
@@ -159,7 +170,7 @@ public class GridWorldNode extends AbstractGridWorldNode{
 			}
 		});
 	}
-	
+
 	/**
 	 * Get description of the environment state (agents position) and the list of rewards.
 	 * Encode this it into an array of raw float values.
@@ -179,7 +190,7 @@ public class GridWorldNode extends AbstractGridWorldNode{
 		f[pos] = posYEncoder.encode(coords[1]);
 		return f;
 	}
-	
+
 	/**
 	 * This method is used for waiting for receiving communication.
 	 * The node publishes current state of the environment, if in the 
