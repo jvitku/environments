@@ -5,7 +5,9 @@ import java.util.LinkedList;
 import org.ros.namespace.GraphName;
 import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Publisher;
+
 import ctu.nengoros.network.node.AbstractConfigurableHannsNode;
+import ctu.nengoros.network.node.AbstractHannsNode;
 import ctu.nengoros.network.node.infrastructure.rosparam.impl.PrivateRosparam;
 import ctu.nengoros.network.node.infrastructure.rosparam.manager.ParamList;
 import ctu.nengoros.network.node.observer.Observer;
@@ -15,6 +17,9 @@ import ctu.nengoros.util.SL;
 public abstract class AbstractGridWorldNode extends AbstractConfigurableHannsNode{
 
 	public static final String name = "GridWorld";
+
+	public static final String topicDataIn = AbstractHannsNode.topicDataIn;
+	public static final String topicDataOut = AbstractHannsNode.topicDataOut;
 
 	/**
 	 * World parameters

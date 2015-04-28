@@ -17,7 +17,6 @@ import org.ros.message.MessageListener;
 import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Subscriber;
 
-import ctu.nengoros.network.node.AbstractHannsNode;
 import ctu.nengoros.util.SL;
 
 /**
@@ -106,7 +105,7 @@ public class GridWorldNode extends AbstractGridWorldNode{
 		 * 
 		 * Note that environments publish to topic named topicDataIn -> normal nodes receive these messages
 		 */
-		statePublisher = connectedNode.newPublisher(AbstractHannsNode.topicDataIn, std_msgs.Float32MultiArray._TYPE);
+		statePublisher = connectedNode.newPublisher(topicDataIn, std_msgs.Float32MultiArray._TYPE);
 
 		/**
 		 * Action subscriber = subscribe to agents actions, process agents requests for simulating one step
@@ -114,7 +113,7 @@ public class GridWorldNode extends AbstractGridWorldNode{
 		 * Note that environments subscribe to topic named topicDataOut -> receive topicDataOut from normal nodes
 		 */
 		Subscriber<std_msgs.Float32MultiArray> actionSub = 
-				connectedNode.newSubscriber(AbstractHannsNode.topicDataOut, std_msgs.Float32MultiArray._TYPE);
+				connectedNode.newSubscriber(topicDataOut, std_msgs.Float32MultiArray._TYPE);
 
 		actionSub.addMessageListener(new MessageListener<std_msgs.Float32MultiArray>() {
 			@Override
