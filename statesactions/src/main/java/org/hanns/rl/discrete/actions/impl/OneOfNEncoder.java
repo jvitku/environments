@@ -43,8 +43,6 @@ public class OneOfNEncoder implements ActionEncoder{
 			throw new DecoderException("OneOfNEncoder: message has incorrect length! " +
 					"Expected "+set.getNumOfActions()+" and found "+data.length);
 
-		//int index = ActionSet.NOOP;	// no action index
-
 		int index = 0;
 		boolean found = false;
 		
