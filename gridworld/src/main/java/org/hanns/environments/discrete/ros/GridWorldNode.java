@@ -128,17 +128,9 @@ public class GridWorldNode extends AbstractGridWorldNode{
 					try {
 						step++;
 						
-						System.out.println("xxxy asdfasd "+SL.toStr(data));
-						
 						dataExchanged = true;
 						int action = actionEncoder.decode(data);
 						
-						/*
-						if(action == -1){
-							System.out.println("NOOP received, skipping the step");
-							return;
-						}
-						*/
 						Action a = new FourWayMovement(action);
 
 						if((step)%logPeriod == 0)

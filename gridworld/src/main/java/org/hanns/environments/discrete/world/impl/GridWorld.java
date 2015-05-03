@@ -163,7 +163,7 @@ public class GridWorld implements GridWorldInt{
 	 */
 	@Override
 	public String vis(){
-		System.out.println("map dimensions: "+sx+" "+sy);
+		//System.out.println("map dimensions: "+sx+" "+sy);
 		String line = "------------------------------------ pos: "+SL.toStr(current)+"\n";
 		for(int i=sy-1; i>=0; i--){
 			for(int j=0; j<sx; j++){
@@ -242,5 +242,4 @@ public class GridWorld implements GridWorldInt{
 	public boolean hasMoved() {
 		return (current[0]!=previous[0])|| (current[1]!=previous[1]);
 	}
-
 }
